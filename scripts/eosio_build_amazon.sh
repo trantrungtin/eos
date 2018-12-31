@@ -4,7 +4,7 @@ MEM_MEG=$( free -m | sed -n 2p | tr -s ' ' | cut -d\  -f2 )
 CPU_SPEED=$( lscpu | grep "MHz" | tr -s ' ' | cut -d\  -f3 | cut -d'.' -f1 )
 CPU_CORE=$( nproc )
 MEM_GIG=$(( ((MEM_MEG / 1000) / 2) ))
-JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
+export JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
 
 DISK_TOTAL=$( df -h . | grep /dev | tr -s ' ' | cut -d\  -f2 | sed 's/[^0-9]//' )
 DISK_AVAIL=$( df -h . | grep /dev | tr -s ' ' | cut -d\  -f4 | sed 's/[^0-9]//' )
@@ -121,7 +121,7 @@ if [ -z $CMAKE ]; then
 	&& tar xf cmake-$CMAKE_VERSION.tar.gz \
 	&& cd cmake-$CMAKE_VERSION \
 	&& ./bootstrap --prefix=$HOME \
-	&& make -j"${CPU_CORE}" \
+	&& make -j"${JOBS}" \
 	&& make install \
 	&& cd .. \
 	&& rm -f cmake-$CMAKE_VERSION.tar.gz \
@@ -141,7 +141,7 @@ if [ ! -d $BOOST_ROOT ]; then
 	&& tar -xvjf boost_$BOOST_VERSION.tar.bz2 \
 	&& cd boost_$BOOST_VERSION/ \
 	&& ./bootstrap.sh "--prefix=${BOOST_ROOT}" \
-	&& ./b2 -q -j"${CPU_CORE}" install \
+	&& ./b2 -q -j"${JOBS}" install \
 	&& cd .. \
 	&& rm -f boost_$BOOST_VERSION.tar.bz2 \
 	&& rm -rf $BOOST_LINK_LOCATION \
@@ -184,7 +184,7 @@ if [ ! -d $MONGO_C_DRIVER_ROOT ]; then
 	&& mkdir -p cmake-build \
 	&& cd cmake-build \
 	&& cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME -DENABLE_BSON=ON -DENABLE_SSL=OPENSSL -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DENABLE_STATIC=ON .. \
-	&& make -j"${CPU_CORE}" \
+	&& make -j"${JOBS}" \
 	&& make install \
 	&& cd ../.. \
 	&& rm mongo-c-driver-$MONGO_C_DRIVER_VERSION.tar.gz \
@@ -199,7 +199,7 @@ if [ ! -d $MONGO_CXX_DRIVER_ROOT ]; then
 	git clone https://github.com/mongodb/mongo-cxx-driver.git --branch releases/v$MONGO_CXX_DRIVER_VERSION --depth 1 mongo-cxx-driver-$MONGO_CXX_DRIVER_VERSION \
 	&& cd mongo-cxx-driver-$MONGO_CXX_DRIVER_VERSION/build \
 	&& cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME .. \
-	&& make -j"${CPU_CORE}" VERBOSE=1 \
+	&& make -j"${JOBS}" VERBOSE=1 \
 	&& make install \
 	&& cd ../.. \
 	|| exit 1

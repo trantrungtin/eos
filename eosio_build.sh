@@ -281,7 +281,8 @@ $CMAKE -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" -DCMAKE_CXX_COMPILER="${CXX_COMP
    -DENABLE_COVERAGE_TESTING="${ENABLE_COVERAGE_TESTING}" -DBUILD_DOXYGEN="${DOXYGEN}" \
    -DCMAKE_INSTALL_PREFIX=$OPT_LOCATION/eosio ${LOCAL_CMAKE_FLAGS} "${CURRENT_DIR}"
 if [ $? -ne 0 ]; then exit -1; fi
-make -j$CORES
+echo "CORES available for make -j: ${JOBS}"
+make -j$JOBS
 if [ $? -ne 0 ]; then exit -1; fi
 popd &> /dev/null
 

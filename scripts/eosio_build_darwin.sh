@@ -2,11 +2,10 @@ OS_VER=$(sw_vers -productVersion)
 OS_MAJ=$(echo "${OS_VER}" | cut -d'.' -f1)
 OS_MIN=$(echo "${OS_VER}" | cut -d'.' -f2)
 OS_PATCH=$(echo "${OS_VER}" | cut -d'.' -f3)
-
 MEM_GIG=$(bc <<< "($(sysctl -in hw.memsize) / 1024000000)")
-
 CPU_SPEED=$(bc <<< "scale=2; ($(sysctl -in hw.cpufrequency) / 10^8) / 10")
 CPU_CORE=$( sysctl -in machdep.cpu.core_count )
+export JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
 
 DISK_INSTALL=$(df -h . | tail -1 | tr -s ' ' | cut -d\  -f1 || cut -d' ' -f1)
 blksize=$(df . | head -1 | awk '{print $2}' | cut -d- -f1)
