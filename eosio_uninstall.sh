@@ -12,7 +12,7 @@ binaries=(cleos
           nodeos
           eosio-applesdemo)
 
-if [ -d $OPT_LOCATION/opt/eosio ]; then
+if [ -d $OPT_LOCATION/eosio ]; then
    printf "\tDo you wish to remove this install? (requires sudo)\n"
    select yn in "Yes" "No"; do
       case $yn in
@@ -22,7 +22,7 @@ if [ -d $OPT_LOCATION/opt/eosio ]; then
                exit -1
             fi
 
-            pushd $OPT_LOCATION &> /dev/null
+            pushd $HOME &> /dev/null
             rm -rf eosio
             pushd bin &> /dev/null
             for binary in ${binaries[@]}; do
