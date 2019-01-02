@@ -185,7 +185,7 @@ if [ ! -d $BOOST_ROOT ]; then
 	curl -LO https://dl.bintray.com/boostorg/release/$BOOST_VERSION_MAJOR.$BOOST_VERSION_MINOR.$BOOST_VERSION_PATCH/source/boost_$BOOST_VERSION.tar.bz2 \
 	&& tar -xvf boost_$BOOST_VERSION.tar.bz2 \
 	&& cd boost_$BOOST_VERSION \
-	&& ./bootstrap.sh "--prefix=${SRC_LOCATION}/boost_${BOOST_VERSION}" \
+	&& ./bootstrap.sh --prefix=$SRC_LOCATION/boost_$BOOST_VERSION \
 	&& ./b2 -q -j$(sysctl -in machdep.cpu.core_count) install \
 	&& cd .. \
 	&& rm -f boost_$BOOST_VERSION.tar.bz2 \
