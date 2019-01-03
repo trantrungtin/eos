@@ -260,6 +260,7 @@ if [ $? -ne 0 ]; then
    exit -1
 fi
 
+cd $SRC_LOCATION
 . "$FILE" # Execute OS specific build file
 
 printf "\\n========================================================================\\n"
