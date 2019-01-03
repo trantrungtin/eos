@@ -218,6 +218,8 @@ fi
 
 printf "\\n"
 
+echo $SOURCE_DIR
+
 printf "Checking MongoDB installation...\\n"
 if [ ! -d $MONGODB_ROOT ]; then
 	printf "Installing MongoDB into ${MONGODB_ROOT}...\\n"
