@@ -206,7 +206,7 @@ if [ ! -d $MONGODB_ROOT ]; then
 	&& mv $SRC_LOCATION/mongodb-osx-x86_64-$MONGODB_VERSION $MONGODB_ROOT \
 	&& touch $MONGODB_LOG_LOCATION/mongod.log \
 	&& rm -f mongodb-osx-ssl-x86_64-$MONGODB_VERSION.tgz \
-	&& cp -f $SOURCE_DIR/scripts/mongod.conf $MONGODB_CONF \
+	&& cp -f $CURRENT_DIR/scripts/mongod.conf $MONGODB_CONF \
 	&& mkdir -p $MONGODB_DATA_LOCATION \
 	&& rm -rf $MONGODB_LINK_LOCATION \
 	&& rm -rf $BIN_LOCATION/mongod \
