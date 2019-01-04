@@ -14,6 +14,11 @@ if [ -d "/usr/local/include/eosio" ]; then
 
             rm -rf wasm
 
+            if [ $( uname ) == "Darwin" ]; then
+               brew uninstall mongo-c-driver
+               brew uninstall mongo-cxx-driver
+            fi
+
             pushd include &> /dev/null
             rm -rf libbson-1.0 libmongoc-1.0 mongocxx bsoncxx appbase chainbase eosio eosio.system eosiolib fc libc++ musl secp256k* 2>/dev/null
             popd &> /dev/null
