@@ -10,6 +10,7 @@
 
 #include <chrono>
 
+using namespace eosio::chain;
 namespace eosio { namespace detail {
   struct producer_api_plugin_response {
      std::string result;
@@ -33,9 +34,11 @@ struct async_result_visitor : public fc::visitor<fc::variant> {
 
 #define CALL(api_name, api_handle, call_name, INVOKE, http_response_code) \
 {std::string("/v1/" #api_name "/" #call_name), \
-   [&api_handle](string, string body, url_response_callback cb) mutable { \
+   [this, &api_handle](string, string body, url_response_callback cb) mutable { \
           try { \
              if (body.empty()) body = "{}"; \
+             const auto& params = fc::json::from_string(body).as<producer_api_plugin::token_params>(); \
+             EOS_ASSERT(params.token == this->producer_api_token, invalid_http_request, "missing token parameter"); \
              INVOKE \
              cb(http_response_code, fc::variant(result)); \
           } catch (...) { \
@@ -45,8 +48,10 @@ struct async_result_visitor : public fc::visitor<fc::variant> {
 
 #define CALL_ASYNC(api_name, api_handle, call_name, call_result, INVOKE, http_response_code) \
 {std::string("/v1/" #api_name "/" #call_name), \
-   [&api_handle](string, string body, url_response_callback cb) mutable { \
+   [this, &api_handle](string, string body, url_response_callback cb) mutable { \
       if (body.empty()) body = "{}"; \
+      const auto& params = fc::json::from_string(body).as<producer_api_plugin::token_params>(); \
+      EOS_ASSERT(params.token == this->producer_api_token, invalid_http_request, "missing token parameter"); \
       auto next = [cb, body](const fc::static_variant<fc::exception_ptr, call_result>& result){\
          if (result.contains<fc::exception_ptr>()) {\
             try {\
@@ -133,6 +138,10 @@ void producer_api_plugin::plugin_startup() {
 
 void producer_api_plugin::plugin_initialize(const variables_map& options) {
    try {
+      if( options.count( "producer-api-token" )) {
+         this->producer_api_token = options.at( "producer-api-token" ).as<string>();
+      }
+
       const auto& _http_plugin = app().get_plugin<http_plugin>();
       if( !_http_plugin.is_on_loopback()) {
          wlog( "\n"
@@ -148,6 +157,11 @@ void producer_api_plugin::plugin_initialize(const variables_map& options) {
    } FC_LOG_AND_RETHROW()
 }
 
+void producer_api_plugin::set_program_options(options_description& cli, options_description& cfg){
+   cfg.add_options()
+      ( "producer-api-token", bpo::value<string>()->default_value("\"\""), "The token authenticated the http request.")
+      ;
+}
 
 #undef INVOKE_R_R
 #undef INVOKE_R_R_R_R
